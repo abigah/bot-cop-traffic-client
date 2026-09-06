@@ -77,7 +77,13 @@ Recorded because they were not in the design doc and are cheap to change now.
 2. **Not installed anywhere.** Design §12 step 2 is the payoff: the client on
    every P2C site means exception reports and job heartbeats start flowing
    months before the extranets move. That needs the hub to accept pings in
-   `local` mode first, and the hub is a fresh scaffold with no commits.
+   `local` mode first.
+
+   `docs/INSTALL.md` is written for whoever does that installing, and is
+   explicit that a correct install today ends with the package staged and
+   switched off. **No tag exists**, deliberately — sites pin `dev-main` until
+   there is a hub to prove the package against. Tag `v0.1.0` at that point and
+   the install instructions already cover the switch.
 3. **Ping tokens are unversioned.** The contracts repo records this as open: a
    rotated token takes effect on the next manifest pull, so pings using the old
    one fail in between. Nothing to do here until the hub decides how it issues

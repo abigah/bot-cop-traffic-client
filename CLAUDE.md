@@ -8,6 +8,9 @@ decisions; the hub owns all alerting.
 ## Read first
 
 - `README.md` — what the package does and how a site uses it.
+- `docs/INSTALL.md` — installing it on a monitored site. Written to be handed to
+  someone working in the *site's* repo, including what "finished" looks like
+  while there is still nothing to send to.
 - `docs/HANDOFF.md` — where things stand and what is left.
 - `docs/faq.md` — the `/up` never-cached rule and the site-setup questions.
 - `../bot-cop-traffic-prober/docs/monitoring-prober-design.md` — the full design.

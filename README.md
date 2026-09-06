@@ -13,12 +13,42 @@ every alerting decision.
 
 ## Install
 
+**Installing this on a site? Follow [docs/INSTALL.md](docs/INSTALL.md)** — it is
+written to be followed literally, and it covers the two things this section
+glosses over: the package is private and unpublished, and the receiving end does
+not exist yet.
+
+The short version. This package is not on Packagist, so the site's
+`composer.json` needs a VCS repository entry:
+
+```json
+"repositories": [
+    { "type": "vcs", "url": "https://github.com/abigah/bot-cop-traffic-client" }
+]
+```
+
 ```sh
-composer require abigah/bot-cop-traffic-client
+composer require "abigah/bot-cop-traffic-client:dev-main"
 php artisan vendor:publish --tag=monitoring-client-config
 ```
 
+There is no tag yet, so the constraint is `dev-main`. No `minimum-stability`
+change is needed — Composer sets the flag implicitly from a `dev-` constraint.
+
 Then, in `.env`:
+
+```dotenv
+MONITORING_CLIENT_ENABLED=false
+MONITORING_CLIENT_ENDPOINTS=
+```
+
+**Both of those are correct as shown, today.** The hub that issues tokens does
+not exist yet and the prober has nothing to authenticate a ping against, so a
+site installed now stages the package and leaves it switched off. Switching it
+on later is these two lines and nothing else. `docs/INSTALL.md` explains what a
+finished install looks like when no traffic is expected.
+
+Once there is somewhere to send:
 
 ```dotenv
 MONITORING_CLIENT_ENABLED=true
