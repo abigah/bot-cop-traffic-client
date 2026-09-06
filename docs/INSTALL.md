@@ -187,6 +187,18 @@ For a job whose code you should not touch, map it in
 For a job that knows more about its outcome than "handle() returned", use the
 trait instead — see the README. Use one mechanism or the other per job, not both.
 
+**A scheduled job needs nothing extra.** `Schedule::job()` dispatches a
+`ShouldQueue` job through the queue, so the registry above already covers it —
+the scheduler only decides when. Check for these first; they are the cheapest
+heartbeats a site has.
+
+Two cases bypass the queue and the registry cannot see them: a
+`Schedule::command()` console command, and `Schedule::job()` given a job that is
+not `ShouldQueue`. Both ping from the scheduler's `onSuccess`/`onFailure` hooks
+instead — see the README — and both must read the token from **config, not
+`env()`**, because `env()` returns null once `config:cache` has run and a null
+token is a silent no-op.
+
 Add a `HEARTBEAT_*` line per job to `.env` (with the token from the hub) and to
 `.env.example` (empty).
 
@@ -213,17 +225,49 @@ One pair per deploy target, not per monitor: the window belongs to the site.
 Two changes, both worth making regardless of whether monitoring is switched on
 yet — neither depends on it.
 
-Apply the never-cache middleware to the health route:
+Apply the never-cache middleware to the health route.
+
+**Not with `appendToGroup('health', ...)`.** Laravel's built-in health route —
+`withRouting(health: '/up')` — is registered with no middleware group at all, so
+there is nothing to append to and nothing reports an error: you get a health
+route that is still cacheable while looking protected.
+
+Register it globally and let it scope itself to the path:
 
 ```php
-use Abigah\BotCopTrafficClient\Http\Middleware\NeverCache;
+// app/Http/Middleware/NeverCacheHealth.php
+public function handle(Request $request, Closure $next): Response
+{
+    if (! $request->is('up')) {
+        return $next($request);
+    }
+
+    return app(NeverCache::class)->handle($request, $next);
+}
 ```
 
 ```php
-->withRouting(health: '/up')
 ->withMiddleware(function (Middleware $middleware) {
-    $middleware->appendToGroup('health', [NeverCache::class]);
+    $middleware->append([\App\Http\Middleware\NeverCacheHealth::class]);
 })
+```
+
+Global is the right layer as well as the convenient one: middleware unwinds in
+reverse and global wraps the groups, so this runs *after* anything in `web` that
+sets cache headers, rather than racing it.
+
+If the site defines its own `/up` route instead of using `withRouting(health:)`,
+attach `NeverCache::class` to that route directly and skip the wrapper. Do not
+switch an existing site to that just for this — you would take on the
+`DiagnosingHealth` dispatch, the maintenance-mode exemption, and the route
+ordering against any catch-all the CMS registers.
+
+Then prove it, because this is the kind of thing that silently stops working:
+
+```php
+$response = $this->get('/up');
+$this->assertStringContainsString('no-store', $response->headers->get('Cache-Control'));
+$this->assertSame('no-store', $response->headers->get('CDN-Cache-Control'));
 ```
 
 And if the site is behind Cloudflare, add a Cache Rule bypassing cache for

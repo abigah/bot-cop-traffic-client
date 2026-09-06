@@ -132,6 +132,40 @@ one that failed.
 Use one mechanism or the other for a given job. Both works, but sends two pings
 for one run.
 
+### Scheduled work
+
+A scheduled job needs nothing extra. `Schedule::job()` dispatches a `ShouldQueue`
+job through the queue, so `JobProcessed` fires and the registry above pings it
+like any other job — the scheduler only decides *when*:
+
+```php
+Schedule::job(new SendNightlyDigest)->dailyAt('06:00');
+```
+
+That is the intended shape: the heartbeat rides on work the site already does,
+and there is no separate heartbeat job to add.
+
+Two cases bypass the queue, and the registry cannot see either of them:
+
+| | Why |
+|---|---|
+| `Schedule::command('foo:bar')` | A console command was never a job. |
+| `Schedule::job(new PlainJob)` where the job is **not** `ShouldQueue` | `Schedule::job()` falls back to `dispatchNow()`. |
+
+Both are still one line each, from the scheduler's own hooks:
+
+```php
+Schedule::command('entries:handle-hourly-schedule')
+    ->hourly()
+    ->onSuccess(fn () => MonitoringClient::ping(config('monitoring-client.heartbeats.scheduled.entries')))
+    ->onFailure(fn () => MonitoringClient::fail(config('monitoring-client.heartbeats.scheduled.entries')));
+```
+
+Read the token from **config, not `env()`**. `env()` outside a config file
+returns null once `config:cache` has run, which is normal in production — and a
+null token is a silent no-op, so the heartbeat would stop firing exactly where
+it matters and nowhere you would notice.
+
 ## Deploy pings
 
 A deploy is an event heartbeat. Call the command from the deploy script:
@@ -205,6 +239,10 @@ Laravel's `/up`. Two things are worth knowing, both covered in
 
    Route::get('/up', /* … */)->middleware(NeverCache::class);
    ```
+
+   That works for a route you define. Laravel's **built-in** health route
+   (`withRouting(health: '/up')`) has no middleware group to attach to — see
+   [docs/INSTALL.md](docs/INSTALL.md) for the one-line wrapper that covers it.
 
 2. **`/up` only proves the framework booted.** This package adds no health
    logic. If you want it to mean more, listen for `DiagnosingHealth` — the FAQ
