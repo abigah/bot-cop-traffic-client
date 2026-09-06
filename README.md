@@ -14,9 +14,9 @@ every alerting decision.
 ## Install
 
 **Installing this on a site? Follow [docs/INSTALL.md](docs/INSTALL.md)** — it is
-written to be followed literally, and it covers the two things this section
-glosses over: the package is private and unpublished, and the receiving end does
-not exist yet.
+written to be followed literally, and covers what this section glosses over: the
+package is private and unpublished, where the tokens come from, and which
+environments get switched on.
 
 The short version. This package is not on Packagist, so the site's
 `composer.json` needs a VCS repository entry:
@@ -35,24 +35,17 @@ php artisan vendor:publish --tag=monitoring-client-config
 There is no tag yet, so the constraint is `dev-main`. No `minimum-stability`
 change is needed — Composer sets the flag implicitly from a `dev-` constraint.
 
-Then, in `.env`:
-
-```dotenv
-MONITORING_CLIENT_ENABLED=false
-MONITORING_CLIENT_ENDPOINTS=
-```
-
-**Both of those are correct as shown, today.** The hub that issues tokens does
-not exist yet and the prober has nothing to authenticate a ping against, so a
-site installed now stages the package and leaves it switched off. Switching it
-on later is these two lines and nothing else. `docs/INSTALL.md` explains what a
-finished install looks like when no traffic is expected.
-
-Once there is somewhere to send:
+Then, in `.env`, on **production**:
 
 ```dotenv
 MONITORING_CLIENT_ENABLED=true
 MONITORING_CLIENT_ENDPOINTS=https://bot-cop-traffic-prober.thelifeproject.workers.dev
+```
+
+and on staging, local, CI, or any clone of production:
+
+```dotenv
+MONITORING_CLIENT_ENABLED=false
 ```
 
 `MONITORING_CLIENT_ENABLED` defaults to **false**, deliberately: a staging clone

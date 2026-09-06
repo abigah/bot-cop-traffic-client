@@ -79,11 +79,20 @@ Recorded because they were not in the design doc and are cheap to change now.
    months before the extranets move. That needs the hub to accept pings in
    `local` mode first.
 
-   `docs/INSTALL.md` is written for whoever does that installing, and is
-   explicit that a correct install today ends with the package staged and
-   switched off. **No tag exists**, deliberately — sites pin `dev-main` until
-   there is a hub to prove the package against. Tag `v0.1.0` at that point and
-   the install instructions already cover the switch.
+   `docs/INSTALL.md` is written for whoever does that installing. It documents
+   the **production** topology — the site points at the prober, not at an
+   extranet — because an extranet URL is a migration state a site would have to
+   be reconfigured out of. Local mode is a footnote there, using the endpoint
+   fan-out so a site is correct before, during and after the switch.
+
+   The hub's `local` mode now accepts these signals directly at
+   `{extranet}/monitoring/ping/{token}` and `/report/{token}`, which match the
+   paths this package sends. Verified: the hub issues `Str::random(48)` tokens,
+   which satisfy the prober's `^[A-Za-z0-9_-]{16,128}$`.
+
+   **No tag exists**, deliberately — sites pin `dev-main` until the package has
+   been proven against a live tenant. Tag `v0.1.0` at that point; the install
+   instructions already cover the switch.
 3. **Ping tokens are unversioned.** The contracts repo records this as open: a
    rotated token takes effect on the next manifest pull, so pings using the old
    one fail in between. Nothing to do here until the hub decides how it issues
