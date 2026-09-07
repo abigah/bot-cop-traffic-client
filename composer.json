@@ -2,7 +2,7 @@
     "name": "abigah/bot-cop-traffic-client",
     "description": "The site-side toolkit for Bot Cop Traffic Division: job heartbeats, deploy pings and exception reporting. No UI dependencies; installable on any Laravel or Statamic site.",
     "type": "library",
-    "license": "proprietary",
+    "license": "MIT",
     "keywords": [
         "laravel",
         "monitoring",

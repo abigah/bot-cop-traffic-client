@@ -13,14 +13,19 @@ your site  ──ping/report──▶  prober  ──delivers──▶  hub (the
                                                      └─ owns every alerting decision
 ```
 
-The prober's production URL is:
+The prober's URL is the endpoint you configure, and it does not change per
+site:
 
 ```
-https://bot-cop-traffic-prober.thelifeproject.workers.dev
+MONITORING_CLIENT_ENDPOINTS=https://your-prober.example
 ```
 
-That is the endpoint you configure, and it does not change per site. What
-changes per site is the **tokens**, which are issued by the hub.
+`your-prober.example` is a placeholder. **Ask whoever runs the prober for the
+real hostname** — it is deliberately not written down here, because a published
+prober URL is an endpoint anyone can send requests to, and the prober is billed
+per request. Keep it in the environment alongside the tokens.
+
+What changes per site is the **tokens**, which are issued by the hub.
 
 You do not point a site at the hub. The hub can accept these signals directly —
 it has the same endpoints for the transitional period before an extranet's
@@ -106,7 +111,7 @@ reference for every option and are more current than any summary.
 
 ```dotenv
 MONITORING_CLIENT_ENABLED=true
-MONITORING_CLIENT_ENDPOINTS=https://bot-cop-traffic-prober.thelifeproject.workers.dev
+MONITORING_CLIENT_ENDPOINTS=https://your-prober.example
 ```
 
 That endpoint is the same on every monitored site. Do not substitute an
@@ -350,7 +355,7 @@ list and every endpoint receives every signal, so list both and the site is
 correct before, during and after the switch:
 
 ```dotenv
-MONITORING_CLIENT_ENDPOINTS=https://bot-cop-traffic-prober.thelifeproject.workers.dev,https://{extranet}/monitoring
+MONITORING_CLIENT_ENDPOINTS=https://your-prober.example,https://{extranet}/monitoring
 ```
 
 Endpoints are called concurrently, so the second one costs no extra latency, and

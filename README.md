@@ -39,8 +39,12 @@ Then, in `.env`, on **production**:
 
 ```dotenv
 MONITORING_CLIENT_ENABLED=true
-MONITORING_CLIENT_ENDPOINTS=https://bot-cop-traffic-prober.thelifeproject.workers.dev
+MONITORING_CLIENT_ENDPOINTS=https://your-prober.example
 ```
+
+`your-prober.example` is a placeholder — ask whoever runs the prober for the
+real hostname. It is not published here: it is an endpoint anyone could send
+requests to, and the prober is billed per request.
 
 and on staging, local, CI, or any clone of production:
 

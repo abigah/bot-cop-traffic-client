@@ -128,12 +128,12 @@ it('sends a relative path so two servers fingerprint the same fault once', funct
 
 it('scrubs a message before it leaves the site', function () {
     $this->reporter->report(new RuntimeException(
-        'failed for sheldon.kotyk@p2c.com with password=hunter2 via mysql://root:s3cret@db'
+        'failed for alice@example.com with password=hunter2 via mysql://root:s3cret@db'
     ));
 
     $message = $this->recorder->signals()[0]->body['fingerprints'][0]['message'];
 
-    expect($message)->not->toContain('sheldon.kotyk@p2c.com')
+    expect($message)->not->toContain('alice@example.com')
         ->and($message)->not->toContain('hunter2')
         ->and($message)->not->toContain('s3cret')
         ->and($message)->toContain('[email]');
