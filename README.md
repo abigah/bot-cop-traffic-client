@@ -15,8 +15,8 @@ every alerting decision.
 
 **Installing this on a site? Follow [docs/INSTALL.md](docs/INSTALL.md)** — it is
 written to be followed literally, and covers what this section glosses over: the
-package is private and unpublished, where the tokens come from, and which
-environments get switched on.
+package is not on Packagist, where the tokens come from, and which environments
+get switched on.
 
 The short version. This package is not on Packagist, so the site's
 `composer.json` needs a VCS repository entry:

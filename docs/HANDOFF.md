@@ -116,8 +116,7 @@ Laravel 11 was dropped from the constraint rather than left unverified: every
 11.x release is currently blocked by unpatched security advisories, so Composer
 will not install one and the claim could not be tested. Nothing in the package
 is known to be incompatible with it; it is simply not a version anyone should be
-installing onto, and the real targets are 12 (abigah, athletesinaction) and 13
-(prism).
+installing onto, and every site this package targets is on 12 or 13.
 
 The conformance tests validate the client's actual ping bodies and exception
 reports against the pinned schemas in the contracts submodule, and reproduce the

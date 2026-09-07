@@ -68,4 +68,3 @@ Do not re-open decisions recorded there without saying so explicitly.
 - `../bot-cop-traffic-prober` — the Cloudflare Worker; receives this package's
   pings at `/ping/{token}` and `/report/{token}`.
 - `../bot-cop-traffic-contracts` — the conformance kit.
-- `../laravel-monitoring` — the reference package, kept untouched.

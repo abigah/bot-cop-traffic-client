@@ -52,17 +52,17 @@ the switch-on later is one environment variable.
 - PHP 8.2+, Laravel 12 or 13. Laravel 11 is **not** supported: every 11.x release
   is currently blocked by security advisories, so it cannot be installed or
   tested against.
-- The machine running `composer` needs read access to the private
-  `abigah/bot-cop-traffic-client` repo on GitHub. If `gh auth status` is happy
-  and git uses a credential helper, Composer will be too.
+- Network access to GitHub from wherever `composer install` runs, including
+  your CI and your host's build step. The package is public, so no token or
+  deploy key is needed.
 - The site should have a scheduler running if you intend to use exception
   reporting. It almost certainly already does.
 
 ## 1. Add the repository and require the package
 
-This package is **private and not on Packagist**, so a bare
+This package is **not on Packagist**, so a bare
 `composer require abigah/bot-cop-traffic-client` will fail. Add a VCS repository
-first — the same pattern the extranets already use for `abigah/laravel-monitoring`.
+first. The repo is public, so nothing needs authenticating.
 
 In the site's `composer.json`:
 
